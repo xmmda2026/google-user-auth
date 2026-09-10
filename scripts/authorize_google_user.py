@@ -10,6 +10,8 @@ DEFAULT_SCOPES = [
     "https://www.googleapis.com/auth/webmasters.readonly",
     "https://www.googleapis.com/auth/siteverification",
     "https://www.googleapis.com/auth/indexing",
+    "https://www.googleapis.com/auth/webmasters",
+    "https://www.googleapis.com/auth/analytics.edit"
 ]
 DEFAULT_SCOPE_STRING = " ".join(DEFAULT_SCOPES)
 
