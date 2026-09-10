@@ -14,19 +14,19 @@ allowed-tools: Bash(google-user-auth:*)
 - OAuth Client JSON：`/root/.openclaw/skills/google-user-auth/google-oauth-client.json`
 - 用户 token JSON：`/root/.openclaw/skills/google-user-auth/google-user-token.json`
 - OAuth 回调端口：`8765`
-- 授权 scope：首次授权或重新授权默认申请 Gmail、Analytics、Search Console、Site Verification 和 Indexing；需要不同范围时可显式传入 `--scopes` 覆盖默认值
+- 授权 scope：首次授权或重新授权默认申请 Gmail readonly、Analytics readonly、Search Console readonly、Site Verification、Indexing、Search Console 写入和 Analytics 编辑；需要不同范围时可显式传入 `--scopes` 覆盖默认值
 
 ## 已配置账号
 
 - 凭证文件：`google-oauth-client.json` 和 `google-user-token.json`（权限 `600`）
-- 已授权范围：Gmail、Analytics、Indexing、Site Verification、Search Console
+- 已授权范围：Gmail readonly、Analytics readonly、Analytics edit、Indexing、Site Verification、Search Console readonly、Search Console write
 
 ## 统一流程
 
 1. 首次授权：运行 `scripts/authorize_google_user.py`，在 Google 授权页选择目标个人账号并同意本次 scope；脚本收到回调后自动调用 `scripts/exchange_code.py`。
 2. 授权码交换：`exchange_code.py` 使用回调中的一次性 `code` 向 `https://oauth2.googleapis.com/token` 换取 `refresh_token`，保存 `google-user-token.json`；调用方不单独执行该脚本。
 3. 后续刷新：业务脚本运行 `scripts/get-token.sh <scope>`；它读取 `refresh_token`，向 Google 换取短期 `access_token`。
-4. 业务调用：把 `get-token.sh` 输出的 `access_token` 放入 `Authorization: Bearer`，交给 Gmail、GA、GSC、Site Verification 或 Indexing API。
+4. 业务调用：把 `get-token.sh` 输出的 `access_token` 放入 `Authorization: Bearer`，交给 Gmail、GA、GSC、Site Verification 或 Indexing API。普通查询优先使用 readonly scope；只有需要修改 Search Console 或 Google Analytics 配置时才使用 `webmasters` 或 `analytics.edit`。
 
 ## 安全约束
 
